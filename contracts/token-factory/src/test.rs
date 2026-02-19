@@ -69,8 +69,9 @@ fn test_cannot_initialize_twice_with_different_params() {
     client.initialize(&different_admin, &different_treasury, &100_000_000, &50_000_000);
 }
 
-#[test]
-fn test_update_fees() {
+    /// Tests for updating factory fee structure including base and metadata fees.
+    #[test]
+    fn test_update_fees() {
     let env = Env::default();
     env.mock_all_auths();
 
