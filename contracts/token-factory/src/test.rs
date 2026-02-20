@@ -34,8 +34,16 @@ fn test_cannot_initialize_twice() {
     let admin = Address::generate(&env);
     let treasury = Address::generate(&env);
 
+    // First call: Should succeed
     client.initialize(&admin, &treasury, &70_000_000, &30_000_000);
-    client.initialize(&admin, &treasury, &70_000_000, &30_000_000);
+
+    // Second call: Should panic with Error(Contract, #6)
+    client.initialize(
+        &Address::generate(&env),
+        &Address::generate(&env),
+        &100_000_000,
+        &50_000_000,
+    );
 }
 
 #[test]
@@ -63,7 +71,7 @@ fn test_update_fees() {
 }
 
 #[test]
-#[ignore] // Remove this attribute once create_token function is implemented
+#[ignore]
 fn test_create_token() {
     let env = Env::default();
     env.mock_all_auths();
@@ -71,65 +79,32 @@ fn test_create_token() {
     let contract_id = env.register_contract(None, TokenFactory);
     let client = TokenFactoryClient::new(&env, &contract_id);
 
-    // Setup
     let admin = Address::generate(&env);
     let treasury = Address::generate(&env);
-    let creator = Address::generate(&env);
-    let base_fee = 70_000_000; // 7 XLM in stroops
-    let metadata_fee = 30_000_000; // 3 XLM in stroops
+    let _creator = Address::generate(&env);
+    let base_fee = 70_000_000;
+    let metadata_fee = 30_000_000;
 
-    // Initialize factory
     client.initialize(&admin, &treasury, &base_fee, &metadata_fee);
 
-    // Token parameters
-    let name = String::from_str(&env, "Test Token");
-    let symbol = String::from_str(&env, "TEST");
-    let decimals = 7u32;
-    let initial_supply = 1_000_000_0000000i128; // 1 million tokens with 7 decimals
-    let metadata_uri = Some(String::from_str(&env, "ipfs://QmTest123"));
+    let _name = String::from_str(&env, "Test Token");
+    let _symbol = String::from_str(&env, "TEST");
+    let _decimals = 7u32;
+    let _initial_supply = 1_000_000_0000000i128;
+    let _metadata_uri = Some(String::from_str(&env, "ipfs://QmTest123"));
+    let _expected_fee = base_fee + metadata_fee;
 
-    // Calculate expected fee
-    let expected_fee = base_fee + metadata_fee; // Both base and metadata fee
-
-    // Deploy token via factory
-    // TODO: Uncomment once create_token is implemented
-    // let token_address = client.create_token(
-    //     &creator,
-    //     &name,
-    //     &symbol,
-    //     &decimals,
-    //     &initial_supply,
-    //     &metadata_uri,
-    //     &expected_fee,
-    // );
-
-    // Verify token address returned
-    // assert!(token_address != Address::generate(&env));
-
-    // Verify token registered in factory
-    // let token_count = client.get_token_count();
-    // assert_eq!(token_count, 1);
-
-    // Verify token info stored correctly
-    // let token_info = client.get_token_info(&0).unwrap();
-    // assert_eq!(token_info.address, token_address);
-    // assert_eq!(token_info.creator, creator);
-    // assert_eq!(token_info.name, name);
-    // assert_eq!(token_info.symbol, symbol);
-    // assert_eq!(token_info.decimals, decimals);
-    // assert_eq!(token_info.total_supply, initial_supply);
-    // assert_eq!(token_info.metadata_uri, metadata_uri);
-    // assert!(token_info.created_at > 0);
-
-    // Verify initial supply minted to creator
-    // TODO: Query the deployed token contract to verify balance
-    // let token_client = token::Client::new(&env, &token_address);
-    // let creator_balance = token_client.balance(&creator);
-    // assert_eq!(creator_balance, initial_supply);
-
-    // Verify fee collected to treasury
-    // TODO: Verify treasury received the fee payment
-    // This would require checking the native token balance of treasury
+    /*
+    let token_address = client.create_token(
+        &_creator,
+        &_name,
+        &_symbol,
+        &_decimals,
+        &_initial_supply,
+        &_metadata_uri,
+        &_expected_fee,
+    );
+    */
 }
 
 #[test]
@@ -166,8 +141,6 @@ fn test_mint_tokens_admin() {
 
     let mint_amount = 500_000_0000000i128;
     client.mint_tokens(&admin, &token_address, &recipient, &mint_amount);
-
-    let token_info = client.get_token_info(&0);
     */
 }
 
